@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -12,11 +12,13 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  // AsyncStorage,
 } from "react-native";
 // Modules
 import { Controller, useForm } from "react-hook-form";
 // Components
 import SizedBox from "./SizedBox";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function useStyles() {
   return StyleSheet.create({
@@ -86,13 +88,24 @@ function useStyles() {
       fontWeight: "700",
       lineHeight: 34,
     },
+    sampleBox: {
+      alignItems: "center",
+      backgroundColor: "#ffff",
+      borderRadius: 8,
+      flexDirection: "row",
+      height: 48,
+      paddingHorizontal: 16,
+      marginBottom: 20,
+    },
   });
 }
 
-function LoginForm(props) {
-  const emailInput = React.useRef(null);
-  const passwordInput = React.useRef(null);
-
+function LoginForm({ navigation }) {
+  // const emailInput = React.useRef(null);
+  // const passwordInput = useRef(null);
+  // const [text, setText] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const { control, handleSubmit } = useForm({
     defaultValues: {
       email: "",
@@ -100,9 +113,32 @@ function LoginForm(props) {
     },
   });
 
-  const onSubmit = handleSubmit(({ email, password }) => {
-    Alert.alert("Data", `Email: ${email}\nPassword: ${password}`);
-  });
+  const onSubmit = async () => {
+    try {
+      const apiURL = "http://10.245.54.17:4000/user/login";
+      Alert.alert("Data1", `Email: ${email}\nPassword: ${password}`);
+
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: email, password: password }),
+      };
+      console.log("requestOptions", requestOptions);
+      const response = await fetch(apiURL, requestOptions);
+      const data = await response.json();
+      // localStorage.setItem("accessToken", data.token);
+      // console.log(localStorage.getItem("accessToken"));
+      const jsonValue = JSON.stringify(data);
+      await AsyncStorage.setItem("userData", jsonValue);
+      const value = await AsyncStorage.getItem("userData");
+      console.log("localstorage", value);
+      navigation.navigate("Dashboard");
+      // console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+    // Alert.alert("Data", `Email: ${email}\nPassword: ${password}`);
+  };
 
   const styles = useStyles();
 
@@ -114,6 +150,13 @@ function LoginForm(props) {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.content}
           >
+            <TouchableOpacity
+              onPress={() => {
+                console.log("text clicked");
+              }}
+            >
+              <Text style={{ color: "#fff" }}>clickme12</Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Welcome back!</Text>
 
             <SizedBox height={8} />
@@ -121,28 +164,34 @@ function LoginForm(props) {
             <Text style={styles.subtitle}>Sign in to your account</Text>
 
             <SizedBox height={32} />
-
-            <Pressable onPress={() => emailInput.current?.focus()}>
+            {/* <TextInput
+              style={styles.sampleBox}
+              placeholder="Enter Name"
+              onChangeText={(text) => setText(text)}
+              value={text}
+            /> */}
+            <Pressable onPress={() => email.current?.focus()}>
               <View style={styles.form}>
                 <Text style={styles.label}>Email</Text>
 
                 <Controller
                   control={control}
                   name="email"
-                  render={({ onBlur, onChange, value }) => (
+                  render={({ onBlur }) => (
                     <TextInput
                       autoCapitalize="none"
                       autoCompleteType="email"
                       autoCorrect={false}
                       keyboardType="email-address"
                       onBlur={onBlur}
-                      onChangeText={onChange}
+                      onChangeText={(email) => setEmail(email)}
+                      value={email}
                       onSubmitEditing={() => passwordInput.current?.focus()}
-                      ref={emailInput}
+                      // ref={emailInput}
                       returnKeyType="next"
                       style={styles.textInput}
                       textContentType="username"
-                      value={value}
+                      // value={value}
                     />
                   )}
                 />
@@ -164,14 +213,14 @@ function LoginForm(props) {
                       autoCompleteType="password"
                       autoCorrect={false}
                       onBlur={onBlur}
-                      onChangeText={onChange}
+                      onChangeText={(password) => setPassword(password)}
                       onSubmitEditing={onSubmit}
-                      ref={passwordInput}
+                      // ref={passwordInput}
                       returnKeyType="done"
                       secureTextEntry
                       style={styles.textInput}
                       textContentType="password"
-                      value={value}
+                      value={password}
                     />
                   )}
                 />
@@ -186,7 +235,7 @@ function LoginForm(props) {
 
             <SizedBox height={16} />
 
-            <TouchableOpacity onPress={onSubmit}>
+            <TouchableOpacity onPress={handleSubmit(onSubmit)}>
               <View style={styles.button}>
                 <Text style={styles.buttonTitle}>Continue</Text>
               </View>
