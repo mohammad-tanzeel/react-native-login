@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { Text, View, StyleSheet, ScrollView, Image, Alert } from "react-native";
+import { API_BASE_URL } from "@env";
 
 function Dashboard(props) {
   const [data, setData] = useState([]);
+  const base64Image =
+    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg=";
   const [loading, setLoading] = useState(true);
   const fetchData = async () => {
-    const resp = await fetch("http://10.245.54.17:4000/plans");
+    Alert.alert(API_BASE_URL + "/plans");
+    const resp = await fetch(API_BASE_URL + "/plans");
     const data = await resp.json();
-    // console.log(data);
+    console.log(data);
     setData(data);
     setLoading(false);
   };
@@ -29,7 +33,9 @@ function Dashboard(props) {
   });
   return (
     <View style={styles.container}>
+      <Text></Text>
       <Text>Plan List</Text>
+
       <ScrollView>
         <View>
           {data.map((p) => {

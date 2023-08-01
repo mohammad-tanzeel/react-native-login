@@ -19,6 +19,7 @@ import { Controller, useForm } from "react-hook-form";
 // Components
 import SizedBox from "./SizedBox";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "@env";
 
 function useStyles() {
   return StyleSheet.create({
@@ -115,8 +116,11 @@ function LoginForm({ navigation }) {
 
   const onSubmit = async () => {
     try {
-      const apiURL = "http://10.245.54.17:4000/user/login";
-      Alert.alert("Data1", `Email: ${email}\nPassword: ${password}`);
+      const apiURL = API_BASE_URL + "/user/login";
+      Alert.alert(
+        "Data1",
+        `URL: ${apiURL}\nEmail: ${email}\nPassword: ${password}`
+      );
 
       const requestOptions = {
         method: "POST",
@@ -146,101 +150,96 @@ function LoginForm({ navigation }) {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.root}>
         <SafeAreaView style={styles.safeAreaView}>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.content}
+          <TouchableOpacity
+            onPress={() => {
+              console.log("text clicked");
+            }}
           >
-            <TouchableOpacity
-              onPress={() => {
-                console.log("text clicked");
-              }}
-            >
-              <Text style={{ color: "#fff" }}>clickme12</Text>
-            </TouchableOpacity>
-            <Text style={styles.title}>Welcome back!</Text>
+            <Text style={{ color: "#fff" }}>clickme12</Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>Welcome back!</Text>
 
-            <SizedBox height={8} />
+          <SizedBox height={8} />
 
-            <Text style={styles.subtitle}>Sign in to your account</Text>
+          <Text style={styles.subtitle}>Sign in to your account</Text>
 
-            <SizedBox height={32} />
-            {/* <TextInput
+          <SizedBox height={32} />
+          {/* <TextInput
               style={styles.sampleBox}
               placeholder="Enter Name"
               onChangeText={(text) => setText(text)}
               value={text}
             /> */}
-            <Pressable onPress={() => email.current?.focus()}>
-              <View style={styles.form}>
-                <Text style={styles.label}>Email</Text>
+          <Pressable onPress={() => email.current?.focus()}>
+            <View style={styles.form}>
+              <Text style={styles.label}>Email</Text>
 
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({ onBlur }) => (
-                    <TextInput
-                      autoCapitalize="none"
-                      autoCompleteType="email"
-                      autoCorrect={false}
-                      keyboardType="email-address"
-                      onBlur={onBlur}
-                      onChangeText={(email) => setEmail(email)}
-                      value={email}
-                      onSubmitEditing={() => passwordInput.current?.focus()}
-                      // ref={emailInput}
-                      returnKeyType="next"
-                      style={styles.textInput}
-                      textContentType="username"
-                      // value={value}
-                    />
-                  )}
-                />
-              </View>
-            </Pressable>
-
-            <SizedBox height={16} />
-
-            <Pressable onPress={() => passwordInput.current?.focus()}>
-              <View style={styles.form}>
-                <Text style={styles.label}>Password</Text>
-
-                <Controller
-                  control={control}
-                  name="password"
-                  render={({ onBlur, onChange, value }) => (
-                    <TextInput
-                      autoCapitalize="none"
-                      autoCompleteType="password"
-                      autoCorrect={false}
-                      onBlur={onBlur}
-                      onChangeText={(password) => setPassword(password)}
-                      onSubmitEditing={onSubmit}
-                      // ref={passwordInput}
-                      returnKeyType="done"
-                      secureTextEntry
-                      style={styles.textInput}
-                      textContentType="password"
-                      value={password}
-                    />
-                  )}
-                />
-              </View>
-            </Pressable>
-
-            <SizedBox height={16} />
-
-            <View style={styles.forgotPasswordContainer}>
-              <Text style={styles.textButton}>Forgot password?</Text>
+              <Controller
+                control={control}
+                name="email"
+                render={({ onBlur }) => (
+                  <TextInput
+                    autoCapitalize="none"
+                    autoCompleteType="email"
+                    autoCorrect={false}
+                    keyboardType="email-address"
+                    onBlur={onBlur}
+                    onChangeText={(email) => setEmail(email)}
+                    value={email}
+                    // onSubmitEditing={() => passwordInput.current?.focus()}
+                    // ref={emailInput}
+                    returnKeyType="next"
+                    style={styles.textInput}
+                    textContentType="username"
+                    // value={value}
+                  />
+                )}
+              />
             </View>
+          </Pressable>
 
-            <SizedBox height={16} />
+          <SizedBox height={16} />
 
-            <TouchableOpacity onPress={handleSubmit(onSubmit)}>
-              <View style={styles.button}>
-                <Text style={styles.buttonTitle}>Continue</Text>
-              </View>
-            </TouchableOpacity>
-          </KeyboardAvoidingView>
+          <Pressable onPress={() => passwordInput.current?.focus()}>
+            <View style={styles.form}>
+              <Text style={styles.label}>Password</Text>
+
+              <Controller
+                control={control}
+                name="password"
+                render={({ onBlur, onChange, value }) => (
+                  <TextInput
+                    autoCapitalize="none"
+                    autoCompleteType="password"
+                    autoCorrect={false}
+                    onBlur={onBlur}
+                    onChangeText={(password) => setPassword(password)}
+                    onSubmitEditing={onSubmit}
+                    // ref={passwordInput}
+                    returnKeyType="done"
+                    secureTextEntry
+                    style={styles.textInput}
+                    textContentType="password"
+                    value={password}
+                  />
+                )}
+              />
+            </View>
+          </Pressable>
+
+          <SizedBox height={16} />
+
+          <View style={styles.forgotPasswordContainer}>
+            <Text style={styles.textButton}>Forgot password?</Text>
+          </View>
+
+          <SizedBox height={16} />
+
+          <TouchableOpacity onPress={handleSubmit(onSubmit)}>
+            <View style={styles.button}>
+              <Text style={styles.buttonTitle}>Continue</Text>
+            </View>
+          </TouchableOpacity>
         </SafeAreaView>
       </View>
     </TouchableWithoutFeedback>

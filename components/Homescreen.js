@@ -18,6 +18,12 @@ export default function HomeScreen({ navigation }) {
         title="Go to Login"
         onPress={() => navigation.navigate("Login")}
       />
+      <SizedBox height={16} />
+
+      <Button
+        title="Go to Upload"
+        onPress={() => navigation.navigate("Upload")}
+      />
     </View>
   );
 }
